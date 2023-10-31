@@ -8,9 +8,10 @@ function getRandomHexColor() {
 //set link on button by data-atribute
 const btnStart = document.querySelector('button[data-start]');
 const btnStop = document.querySelector('button[data-stop]');
+const body = document.querySelector('body');
 
 //default value of button-stop
-btnStop.setAttribute('disabled', 'false');
+btnStop.disabled = true;
 
 btnStart.addEventListener('click', clickStart);
 btnStop.addEventListener('click', clickStop);
@@ -19,15 +20,15 @@ btnStop.addEventListener('click', clickStop);
 let timerId = null;
 
 function clickStart(event) {
-  btnStop.removeAttribute('disabled');
-  btnStart.setAttribute('disabled', 'false');
+  btnStop.disabled = false;
+  btnStart.disabled = true;
   timerId = setInterval(() => {
-    document.body.style.backgroundColor = getRandomHexColor();
+    body.style.backgroundColor = getRandomHexColor();
   }, 1000);
 }
 
 function clickStop(event) {
-  btnStart.removeAttribute('disabled');
-  btnStop.setAttribute('disabled', 'false');
+  btnStart.disabled = false;
+  btnStop.disabled = true;
   clearInterval(timerId);
 }
