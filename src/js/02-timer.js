@@ -104,5 +104,7 @@ function addLeadingZero(value) {
 }
 
 function stopTimer() {
+  currentDate = null;
+  selectedDate = null;
   clearInterval(timerId);
 }
