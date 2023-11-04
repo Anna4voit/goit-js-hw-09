@@ -4,8 +4,6 @@ import Notiflix from 'notiflix';
 import { Report } from 'notiflix/build/notiflix-report-aio';
 
 let timerId = null;
-let currentDate = null;
-let selectedDate = null;
 
 const inputEl = document.querySelector('#datetime-picker');
 const btnStart = document.querySelector('button[data-start]');
@@ -16,6 +14,12 @@ const dataSeconds = document.querySelector('[data-seconds]');
 
 btnStart.disabled = true;
 
+const styleOptions = {
+  titleFontSize: '20px',
+  messageFontSize: '18px',
+  svgSize: '80px',
+};
+
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -23,44 +27,29 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     if (selectedDates[0].getTime() <= Date.now()) {
-      //window.alert('Please choose a date in the future');
-      // Notiflix.Notify.failure('Please choose a date in the future', {
-      //   position: 'center-top',
-      // });
       Notiflix.Report.failure(
         'Attention',
         'Please choose a date in the future',
         'Okay',
-        {
-          titleFontSize: '20px',
-          messageFontSize: '18px',
-          svgSize: '80px',
-        }
+        styleOptions
       );
     } else {
+      inputEl.disabled = true;
       btnStart.disabled = false;
-      const clickTimer = () => {
-        selectedDate = selectedDates[0].getTime();
-        startTimer();
-      };
-      btnStart.addEventListener('click', clickTimer);
     }
   },
 };
 const fp = flatpickr(inputEl, options);
 
+btnStart.addEventListener('click', startTimer);
+
 function startTimer() {
   btnStart.disabled = true;
   timerId = setInterval(() => {
-    currentDate = Date.now();
-    const deltaDate = selectedDate - currentDate;
+    const deltaDate = new Date(inputEl.value) - Date.now();
 
     if (deltaDate > 0) {
-      const { days, hours, minutes, seconds } = convertMs(deltaDate);
-      dataDays.textContent = addLeadingZero(days);
-      dataHours.textContent = addLeadingZero(hours);
-      dataMinutes.textContent = addLeadingZero(minutes);
-      dataSeconds.textContent = addLeadingZero(seconds);
+      timerValue(deltaDate);
     }
 
     if (deltaDate <= 0) {
@@ -69,17 +58,20 @@ function startTimer() {
         'Timer stopped',
         'To start again, please reload page and choose new date',
         'Okay',
-        {
-          titleFontSize: '20px',
-          messageFontSize: '18px',
-          svgSize: '80px',
-        }
+        styleOptions
       );
       return;
     }
   }, 1000);
 }
 
+function timerValue(val) {
+  const { days, hours, minutes, seconds } = convertMs(val);
+  dataDays.textContent = addLeadingZero(days);
+  dataHours.textContent = addLeadingZero(hours);
+  dataMinutes.textContent = addLeadingZero(minutes);
+  dataSeconds.textContent = addLeadingZero(seconds);
+}
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
@@ -104,7 +96,5 @@ function addLeadingZero(value) {
 }
 
 function stopTimer() {
-  currentDate = null;
-  selectedDate = null;
   clearInterval(timerId);
 }

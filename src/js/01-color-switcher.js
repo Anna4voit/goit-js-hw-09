@@ -20,15 +20,17 @@ btnStop.addEventListener('click', clickStop);
 let timerId = null;
 
 function clickStart(event) {
-  btnStop.disabled = false;
-  btnStart.disabled = true;
+  btnDisabled(false);
   timerId = setInterval(() => {
     body.style.backgroundColor = getRandomHexColor();
   }, 1000);
 }
 
 function clickStop(event) {
-  btnStart.disabled = false;
-  btnStop.disabled = true;
+  btnDisabled(true);
   clearInterval(timerId);
+}
+function btnDisabled(val) {
+  btnStop.disabled = val;
+  btnStart.disabled = !val;
 }
